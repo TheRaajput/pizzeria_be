@@ -1,13 +1,9 @@
 const UserModel = require("./UserModel");
 const jwt = require("jsonwebtoken");
 const ObjectId = require("mongodb").ObjectId;
-const bcrypt = require("bcrypt");
-const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
 const sendEmail = require("../../configs/email");
-const {
-  OtpTemplate,
-  VerificationLink,
-} = require("../../configs/email/emailTemplates");
+const { OtpTemplate } = require("../../configs/email/emailTemplates");
 
 const getUserInfo = async (req, res) => {
   try {
@@ -68,6 +64,7 @@ const createUser = async (req, res) => {
     } else {
       res.send("Error in user creation");
     }
+    console.log(err);
   }
 };
 
