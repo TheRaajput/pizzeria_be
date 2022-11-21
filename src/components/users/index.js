@@ -7,7 +7,7 @@ const {
   getAUserInfo,
   verifyOtp,
   deleteUser,
-} = require("./userController");
+} = require("./UserController");
 const UserRouter = express.Router();
 
 UserRouter.get("/", verifyToken, getUserInfo);
