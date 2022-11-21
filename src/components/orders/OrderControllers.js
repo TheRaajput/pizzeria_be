@@ -23,41 +23,48 @@ const getOrderByUserId = async (req, res) => {
   }
 };
 const createOrder = async (req, res) => {
-  try {
-    const inventory_deletion = req.body.line_items.map(async (products) => {
-      return await Inventory.findOneAndUpdate(
-        {
-          _id: ObjectId(req.body.inventory_id),
-          "products._id": ObjectId(products.product_id),
-        },
-        {
-          $inc: { "products.$.quantity": -products.quantity },
-        },
-        { arrayFilters: [{ "products.$.quantity": { $gt: 20 } }] }
-      );
-    });
-    if (inventory_deletion) {
-      const OrderData = new Orders(req.body);
-      const response = await OrderData.save();
-      const inventory = await Inventory.findById(
-        ObjectId(req.body.inventory_id)
-      );
-      const InventoryMail = inventory.products.find(
-        (items) => items.quantity < 20
-      );
-      if (InventoryMail) {
-        const mailBody = {
-          from: "admin@pizzeria.com",
-          recipients: "singhyasharth20@gmail.com",
-          subject: "Urgent | Regarding updating the inventory.",
-          html: InventoryMailTemplate(),
-        };
-        sendEmail(mailBody);
+  if (req.body.is_custom) {
+    const OrderData = new Orders(req.body);
+    const response = await OrderData.save();
+    return res.status(200).send(response);
+  } else {
+    try {
+      const inventory_deletion = req.body.line_items.map(async (products) => {
+        return await Inventory.findOneAndUpdate(
+          {
+            _id: ObjectId(req.body.inventory_id),
+            "products._id": ObjectId(products.product_id),
+          },
+          {
+            $inc: { "products.$.quantity": -products.quantity },
+          },
+          { arrayFilters: [{ "products.$.quantity": { $gt: 20 } }] }
+        );
+      });
+      if (inventory_deletion) {
+        const OrderData = new Orders(req.body);
+        const response = await OrderData.save();
+        const inventory = await Inventory.findById(
+          ObjectId(req.body.inventory_id)
+        );
+        const InventoryMail = inventory.products.find(
+          (items) => items.quantity < 20
+        );
+        if (InventoryMail) {
+          const mailBody = {
+            from: "admin@pizzeria.com",
+            recipients: "singhyasharth20@gmail.com",
+            subject: "Urgent | Regarding updating the inventory.",
+            html: InventoryMailTemplate(),
+          };
+          sendEmail(mailBody);
+        }
+        return res.status(200).send(response);
       }
-      return res.status(200).send(response);
+    } catch (err) {
+      console.log(err);
+      return res.status(400).send(err);
     }
-  } catch (err) {
-    return res.status(400).send(err);
   }
 };
 

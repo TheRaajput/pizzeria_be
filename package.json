@@ -4,7 +4,7 @@
   "description": "Pizzeria Backend",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "nodemon index.js"
   },
   "author": "Yasharth Singh Parihar",
   "license": "ISC",

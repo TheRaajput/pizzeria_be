@@ -15,15 +15,43 @@ const OrderSchema = new mongoose.Schema(
         quantity: { type: Number },
       },
     ],
-    toppings: [
-      {
-        product_id: { type: String },
-        name: { type: String },
-        category: { type: String },
-        quantity: { type: Number },
-        price: { type: Number },
-      },
-    ],
+    toppings: {
+      pizza_bases: [
+        {
+          _id: { type: String },
+          name: { type: String },
+          cost_per: { type: Number },
+        },
+      ],
+      sauces: [
+        {
+          _id: { type: String },
+          name: { type: String },
+          cost_per: { type: Number },
+        },
+      ],
+      cheese: [
+        {
+          _id: { type: String },
+          name: { type: String },
+          cost_per: { type: Number },
+        },
+      ],
+      vegs: [
+        {
+          _id: { type: String },
+          name: { type: String },
+          cost_per: { type: Number },
+        },
+      ],
+      meat: [
+        {
+          _id: { type: String },
+          name: { type: String },
+          cost_per: { type: Number },
+        },
+      ],
+    },
     status: { type: String, default: "pending" },
     price: { type: Number },
   },
