@@ -113,6 +113,64 @@ const verifyOtp = async (req, res) => {
   }
 };
 
+const forgotPassword = async (req, res) => {
+  try {
+    const response = await UserModel.findOne({ email: req.body.email });
+    if (response) {
+      const confirmationCode = Math.floor(100000 + Math.random() * 900000);
+      const mailBody = {
+        from: "admin@pizzeria.com",
+        recipients: response.email,
+        subject: "Account Verification Required",
+        html: OtpTemplate(confirmationCode),
+      };
+      await sendEmail(mailBody);
+      const resp = await UserModel.findOneAndUpdate(
+        { email: req.body.email },
+        { Otp: confirmationCode }
+      );
+      res.status(200).send("Check your mail for otp");
+    } else {
+      res.status(400).send("User does not exist");
+    }
+  } catch (err) {
+    res.status(400).send(err);
+  }
+};
+
+const forgotpassOtpVerification = async (req, res) => {
+  try {
+    const response = await UserModel.findOne({ email: req.body.email });
+    if (response) {
+      if (response.Otp === req.body.Otp) {
+        res.status(200).send("OTP verified");
+      } else {
+        res.status(400).send("Incorrect Otp");
+      }
+    }
+  } catch (err) {
+    res.status(400).send(err);
+  }
+};
+
+const changePassword = async (req, res) => {
+  try {
+    const response = await UserModel.findOneAndUpdate(
+      { email: req.body.email },
+      { password: req.body.password }
+    );
+    console.log(response);
+    if (response) {
+      res.status(200).send("Password updated");
+    } else {
+      res.status(400).send("Updation failed");
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err);
+  }
+};
+
 module.exports = {
   createUser,
   authenticateUser,
@@ -120,4 +178,7 @@ module.exports = {
   getAUserInfo,
   verifyOtp,
   deleteUser,
+  forgotPassword,
+  forgotpassOtpVerification,
+  changePassword,
 };

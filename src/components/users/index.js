@@ -7,7 +7,11 @@ const {
   getAUserInfo,
   verifyOtp,
   deleteUser,
+  forgotPassword,
+  forgotpassOtpVerification,
+  changePassword,
 } = require("./UserController");
+
 const UserRouter = express.Router();
 
 UserRouter.get("/", verifyToken, getUserInfo);
@@ -16,5 +20,8 @@ UserRouter.get("/:id", getAUserInfo);
 UserRouter.post("/create-user", createUser);
 UserRouter.post("/login", authenticateUser);
 UserRouter.post("/verify", verifyOtp);
+UserRouter.post("/forgot-password", forgotPassword);
+UserRouter.post("/otp-verification", forgotpassOtpVerification);
+UserRouter.post("/change-password", changePassword);
 
 module.exports = UserRouter;
