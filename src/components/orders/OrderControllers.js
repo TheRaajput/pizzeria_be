@@ -76,7 +76,7 @@ const updateOrderStatus = async (req, res) => {
       { new: true }
     );
     emmitter.emit("status-update", response.toJSON());
-    return res.status(200).send(response);
+    return res.status(200).end();
   } catch (err) {
     return res.status(400).send(err);
   }
@@ -84,17 +84,9 @@ const updateOrderStatus = async (req, res) => {
 
 const getOrderStatus = async (req, res) => {
   try {
-    const getStatus = async (req, res) => {
+    emmitter.once("status-update", async function (data) {
       const response = await Orders.findById(ObjectId(req.params.id));
       return res.status(200).send(response.status);
-    };
-    const timeout = setTimeout(() => {
-      getStatus(req, res);
-    }, 1000 * 60 * 5);
-    emmitter.addListener("status-update", (response) => {
-      clearTimeout(timeout);
-      console.log("Sun liya", response);
-      getStatus(req, res);
     });
   } catch (err) {
     return res.status(400).send(err);
